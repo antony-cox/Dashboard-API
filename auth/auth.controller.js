@@ -33,9 +33,9 @@ exports.register = (req, res, next) => {
     req.body.password = crypto.createHmac('sha512', process.env.salt).update(req.body.password).digest("base64");
     req.body.active = false;
 
-    UserModel.findByEmail(req.body.email)
+    UserModel.getByEmail(req.body.email)
         .then((result) => {
-            if (result.length < 1)
+            if (result == null)
             {
                 UserModel.save(req.body)
                     .then((result) => {  

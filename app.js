@@ -39,6 +39,10 @@ app.use('/users', auth.authenticateToken, usersRouter);
 var weightRouter = require('./weight/weight.route');
 app.use('/weight', auth.authenticateToken, weightRouter);
 
+//TRAINERROAD
+var workoutsRouter = require('./workouts/workouts.route');
+app.use('/workouts', auth.authenticateToken, workoutsRouter);
+
 //INDEX ROUTE
 app.use('/', function(req, res, next) {
   res.send('homeDash API');
@@ -50,5 +54,5 @@ const options = {
   cert: fs.readFileSync("/etc/letsencrypt/live/tonny.my.to/fullchain.pem")
 };
 
-//app.listen(3000);
 https.createServer(options, app).listen(3001);
+//app.listen(3000);
