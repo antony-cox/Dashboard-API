@@ -11,11 +11,27 @@ const WorkoutModel = new Schema({
   dateCreated: {type: Date}
 });
 
+const WorkoutRawModel = new Schema({
+  link: {type: String, required: true},
+  name: {type: String},
+  description: {type: String},
+  tss: {type: String},
+  category: {type: String},
+  data: {type: [], validate: v => Array.isArray(v) && v.length > 0},
+  dateCreated: {type: Date}
+});
+
 const Workout = mongoose.model('Workout', WorkoutModel);
+const WorkoutRaw = mongoose.model('WorkoutRaw', WorkoutRawModel);
 
 exports.add = (w) => {
   var workout = new Workout(w);
   return workout.save();
+}
+
+exports.addRaw = (w) => {
+  var workoutRaw = new WorkoutRaw(w);
+  return workoutRaw.save();
 }
 
 exports.get = (category, name) => {
@@ -32,6 +48,21 @@ exports.get = (category, name) => {
   }
 
   return formatSelect(Workout.find(query));
+}
+
+exports.getRaw = (name) => {
+  let query = {};
+
+  if (name != null && name != '')
+  {
+    query.name = new RegExp('^' + name + '$', 'i');;
+  }
+
+  return formatSelect(WorkoutRaw.findOne(query));
+}
+
+exports.getAllRaw = () => {
+  return formatSelect(WorkoutRaw.find());
 }
 
 exports.getDetail = (id) => {

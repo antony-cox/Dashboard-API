@@ -12,6 +12,22 @@ router.post('/', function(req, res, next) {
   }
 });
 
+router.get('/raw', function(req, res, next) {
+  if(hasPermission(req.user)) {
+    WorkoutController.getRaw(req, res, next);
+  } else {
+    res.status(401).send();
+  }
+});
+
+router.get('/processRaw', function(req, res, next) {
+  if(hasPermission(req.user)) {
+    WorkoutController.processRaw(req, res, next);
+  } else {
+    res.status(401).send();
+  }
+});
+
 router.post('/detail', function(req, res, next) {
   if(hasPermission(req.user)) {
     WorkoutController.getDetail(req, res, next);

@@ -50,9 +50,9 @@ app.use('/', function(req, res, next) {
 
 //START SERVER HTTPS
 const options = {
-  key: fs.readFileSync("/etc/letsencrypt/live/tonny.my.to/privkey.pem"),
-  cert: fs.readFileSync("/etc/letsencrypt/live/tonny.my.to/fullchain.pem")
+  key: fs.readFileSync("/etc/letsencrypt/live/tonny.icu/privkey.pem"),
+  cert: fs.readFileSync("/etc/letsencrypt/live/tonny.icu/fullchain.pem")
 };
 
 https.createServer(options, app).listen(3001);
-//app.listen(3000);
+// app.listen(3000);
