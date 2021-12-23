@@ -5,6 +5,8 @@ const userModel = new Schema({
   email: {type: String, required: true},
   password: {type: String, required: true},
   permissions: {type: [String], validate: v => Array.isArray(v) && v.length > 0},
+  intervalsId: {type: String, required: false},
+  intervalsKey: {type: String, required: false},
   active: {type: Boolean}
 });
 

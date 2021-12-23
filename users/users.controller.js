@@ -53,6 +53,9 @@ exports.update = (req, res, next) => {
             if(req.user.permissions.includes(adminPermission))
             {
                 result.email = newUser.email;
+                result.intervalsId = newUser.intervalsId;
+                result.intervalsKey = newUser.intervalsKey;
+
                 if(newUser.password) {
                     result.password = crypto.createHmac('sha512', process.env.salt).update(newUser.password).digest("base64");
                 }
@@ -61,6 +64,9 @@ exports.update = (req, res, next) => {
                 result.active = newUser.active;
             } else if (req.user.email === result.email) {
                 result.email = newUser.email;
+                result.intervalsId = newUser.intervalsId;
+                result.intervalsKey = newUser.intervalsKey;
+                
                 if(newUser.password) {
                     result.password = crypto.createHmac('sha512', process.env.salt).update(newUser.password).digest("base64");
                 };

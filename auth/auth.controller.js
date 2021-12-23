@@ -14,9 +14,19 @@ exports.login = (req, res, next) => {
             if(result)
             {
                 if(result.active) {
-                    var payload = { email: result.email, permissions: result.permissions}
+                    var payload = { 
+                        email: result.email, 
+                        permissions: result.permissions
+                    }
                     var token = jwt.sign(payload, process.env.tokenKey);
-                    res.json({_id: result._id, email: result.email, permissions: result.permissions, token: token});
+                    res.json({
+                        _id: result._id, 
+                        email: result.email, 
+                        intervalsId: result.intervalsId, 
+                        intervalsKey: result.intervalsKey, 
+                        permissions: result.permissions, 
+                        token: token
+                    });
                 } else {
                     res.status(401).send('User inactive.');       
                 }

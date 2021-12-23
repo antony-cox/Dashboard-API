@@ -49,10 +49,10 @@ app.use('/', function(req, res, next) {
 });
 
 //START SERVER HTTPS
-const options = {
-  key: fs.readFileSync("/etc/letsencrypt/live/tonny.icu/privkey.pem"),
-  cert: fs.readFileSync("/etc/letsencrypt/live/tonny.icu/fullchain.pem")
-};
+// const options = {
+//   key: fs.readFileSync("/etc/letsencrypt/live/tonny.icu/privkey.pem"),
+//   cert: fs.readFileSync("/etc/letsencrypt/live/tonny.icu/fullchain.pem")
+// };
 
-https.createServer(options, app).listen(3001);
-// app.listen(3000);
+// https.createServer(options, app).listen(3001);
+app.listen(3000);
