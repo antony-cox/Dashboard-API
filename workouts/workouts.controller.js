@@ -1,3 +1,4 @@
+const https = require('https');
 const WorkoutModel = require('./workouts.model');
 const puppeteer = require('puppeteer');
 const { filter } = require('compression');
@@ -30,6 +31,62 @@ exports.getDetail = (req, res, next) => {
   WorkoutModel.getDetail(id)
   .then((result) => {  
     res.status(201).send(result);
+  })
+  .catch((err) => {
+      next(err);
+  });
+}
+
+exports.sendToIntervals = (req, res, next) => {
+  const workoutId = req.body.workoutId;
+  const intervalsId = req.body.intervalsId;
+  const intervalsKey = req.body.intervalsKey;
+  const intervalsDate = req.body.intervalsDate;
+
+  WorkoutModel.getDetail(workoutId)
+  .then((result) => {  
+    const mrcFile = createMrcFile(result);
+
+    const data = JSON.stringify({
+      category: 'WORKOUT',
+      start_date_local: intervalsDate + 'T00:00:00',
+      type: 'Ride',
+      filename: result.name.replace(' ', '_').replace('+', '').replace('-', '') + '.mrc',
+      file_contents: mrcFile
+    });
+
+    let basicAuth = 'Basic ' + Buffer.from('API_KEY' + ':' + intervalsKey).toString('base64');
+
+    const options = {
+      hostname: 'intervals.icu',
+      path: '/api/v1/athlete/' + intervalsId + '/events',
+      method: 'POST',
+      headers: {
+        Authorization: basicAuth,
+        'Content-Type': 'application/json',
+        'Content-Length': data.length  
+      },
+    }
+
+    const request = https.request(options, response => {
+      let chunks = [];
+
+      response.on('data', d => {
+        chunks.push(d);
+      });
+
+      response.on('end', result => {
+        var body = Buffer.concat(chunks);
+        res.status(201).send(body);
+      });
+
+      response.on('error', error => {
+        res.status(500).send(error);
+      });
+    });
+
+    request.write(data)
+    request.end()
   })
   .catch((err) => {
       next(err);
@@ -162,7 +219,7 @@ exports.getRaw = (req, res, next) => {
   });
 }
 
-exports.processRaw =  (req, res, next) => {
+exports.processRaw = (req, res, next) => {
   WorkoutModel.getAllRaw()
   .then((result) => {  
     log(result.length + ' workouts loaded.');
@@ -312,7 +369,45 @@ exports.processRaw =  (req, res, next) => {
   });
 }
 
+const newline = '\n';
+const tab = '\t';
+
 function log(msg)
 {
   console.log(new Date() + ' - ' + msg);
+}
+
+function createMrcFile(workout)
+{
+  const mrcHeader = createHeader(workout.name, workout.description);
+  const mrcData = createData(workout.data);
+
+  return mrcHeader + newline + mrcData;
+}
+
+function createHeader(name, description)
+{
+  let mrcHeader = '[COURSE HEADER]' + newline;
+  mrcHeader += 'VERSION = 2' + newline 
+  mrcHeader += 'UNITS = ENGLISH' + newline
+  mrcHeader += 'DESCRIPTION = ' + description + newline;
+  mrcHeader += 'FILE NAME = ' + name.replace(' ', '_').replace('+', '').replace('-', '') + '.mrc' + newline;
+  mrcHeader += 'MINUTES PERCENT' + newline;
+  mrcHeader += '[END COURSE HEADER]'
+
+  return mrcHeader;
+}
+
+function createData(data)
+{
+  let mrcData = '[COURSE DATA]' + newline;
+
+  data.forEach(d => {
+    mrcData += (d.startTime / 60) + tab + (d.startPower).toFixed(1) + newline;
+    mrcData += (d.endTime / 60) + tab + (d.endPower).toFixed(1) + newline;
+  });
+
+  mrcData += '[END COURSE DATA]'
+
+  return mrcData;
 }

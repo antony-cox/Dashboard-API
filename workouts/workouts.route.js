@@ -36,6 +36,14 @@ router.post('/detail', function(req, res, next) {
   }
 });
 
+router.post('/sendToIntervals', function(req, res, next) {
+  if(hasPermission(req.user)) {
+    WorkoutController.sendToIntervals(req, res, next);
+  } else {
+    res.status(401).send();
+  }
+});
+
 module.exports = router;
 
 function hasPermission(user)

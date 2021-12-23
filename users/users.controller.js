@@ -66,7 +66,8 @@ exports.update = (req, res, next) => {
                 result.email = newUser.email;
                 result.intervalsId = newUser.intervalsId;
                 result.intervalsKey = newUser.intervalsKey;
-                
+                result.active = newUser.active;
+
                 if(newUser.password) {
                     result.password = crypto.createHmac('sha512', process.env.salt).update(newUser.password).digest("base64");
                 };
