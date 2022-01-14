@@ -7,6 +7,8 @@ const userModel = new Schema({
   permissions: {type: [String], validate: v => Array.isArray(v) && v.length > 0},
   intervalsId: {type: String, required: false},
   intervalsKey: {type: String, required: false},
+  ftp: {type: Number, required: false},
+  weight: {type: Number, required: false},
   active: {type: Boolean}
 });
 

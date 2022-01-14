@@ -23,7 +23,9 @@ exports.login = (req, res, next) => {
                         _id: result._id, 
                         email: result.email, 
                         intervalsId: result.intervalsId, 
-                        intervalsKey: result.intervalsKey, 
+                        intervalsKey: result.intervalsKey,
+                        ftp: result.ftp,
+                        weight: result.weight,
                         permissions: result.permissions, 
                         token: token
                     });
