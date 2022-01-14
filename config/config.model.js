@@ -5,6 +5,7 @@ const configModel = new Schema({
   permissions: {type: [String], validate: v => Array.isArray(v) && v.length > 0},
   selectors: {type: Object},
   athletes: {type: [String], validate: v => Array.isArray(v) && v.length > 0},
+  leaderboardRefreshed: {type: Date}
 });
 
 const Config = mongoose.model('Config', configModel);

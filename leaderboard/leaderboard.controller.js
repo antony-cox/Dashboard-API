@@ -1,5 +1,6 @@
 const LeaderboardModel = require('./leaderboard.model');
 const ConfigController = require('../config/config.controller');
+const ConfigModel = require('../config/config.model');
 const puppeteer = require('puppeteer');
 const e = require('express');
 
@@ -10,10 +11,23 @@ exports.refresh = async (req, res, next) => {
 
   LeaderboardModel.update(data)
   .then((result) => {
-    res.status(201).send(formatData(result));
+    ConfigModel.get()
+    .then((result) => {  
+        result.leaderboardRefreshed = new Date();
+        console.log(result);
+        ConfigModel.add(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+
+    if(res != undefined)
+    {
+      res.status(201).send(formatData(result));
+    }
   })
   .catch((err) => {
-    next(err);
+    console.log(err);
   });
 };
 
@@ -187,9 +201,7 @@ async function getAthleteData(page, config)
   let year = await getValue(page, config.selectors.year);
 
   let distance = await getValue(page, config.selectors.distance);
-  console.log(distance);
   distance = distance.replace(" km", "").replace(",", "");
-  console.log(distance);
 
   let time = await getValue(page, config.selectors.time);
   time = time.replace('<abbr class="unit" title="hour">h</abbr>', '').replace('<abbr class="unit" title="minute">m</abbr>', '');

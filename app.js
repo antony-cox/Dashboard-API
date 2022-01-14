@@ -9,6 +9,7 @@ const app = express();
 const auth = require('./middleware/auth');
 const helmet = require('helmet');
 const compression = require('compression');
+const schedule = require('node-schedule');
 
 require('dotenv').config();
 
@@ -46,6 +47,12 @@ app.use('/workouts', auth.authenticateToken, workoutsRouter);
 //INDEX ROUTE
 app.use('/', function(req, res, next) {
   res.send('homeDash API');
+});
+
+var leaderboardController = require('./leaderboard/leaderboard.controller');
+const refreshJob = schedule.scheduleJob({hour: 4, minute: 0}, () => {
+  console.log('refresh job');
+  leaderboardController.refresh();
 });
 
 //START SERVER HTTPS

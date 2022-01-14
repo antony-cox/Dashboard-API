@@ -18,8 +18,6 @@ const Leaderboard = mongoose.model('Leaderboard', leaderboardModel);
 exports.update = async (data) => {
   for(const d of data)
   {
-    console.log(d);
-    console.log(d.data);
     let doc;
 
     if(await Leaderboard.exists({id: d.id}))

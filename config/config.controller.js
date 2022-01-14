@@ -7,7 +7,6 @@ exports.add = (req, res, next) => {
         if(result)
         {
             result.permissions = req.body.permissions;
-            console.log(result);
         } else {
             result = req.body;    
         }
