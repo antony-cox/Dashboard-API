@@ -14,7 +14,6 @@ exports.refresh = async (req, res, next) => {
     ConfigModel.get()
     .then((result) => {  
         result.leaderboardRefreshed = new Date();
-        console.log(result);
         ConfigModel.add(result);
     })
     .catch((err) => {
@@ -45,25 +44,34 @@ exports.scrape = async (req, res, next) => {
 
 exports.get = (req, res, next) => {
     LeaderboardModel.get()
-    .then((result) => {  
-        res.status(201).send(formatData(result));
+    .then((result) => {
+      ConfigModel.get()
+      .then((c) => {  
+        res.status(201).send(formatData(result, c.leaderboardRefreshed));
+      })
+      .catch((err) => {
+        next(err);
+      });  
     })
     .catch((err) => {
         next(err);
     });
 }
 
-function formatData(result)
+function formatData(result, refreshDate)
 {
-  let formatted = [];
+  let formatted = {
+    refreshDate: refreshDate,
+    leaderboard: []
+  };
 
   result.forEach(r => {
     r.data.forEach(d => {
-      year = formatted.filter(x => x.year == d.year);
+      year = formatted.leaderboard.filter(x => x.year == d.year);
 
       if(year.length > 0)
       {
-        formatted.splice(formatted.indexOf(year[0]), 1);
+        formatted.leaderboard.splice(formatted.leaderboard.indexOf(year[0]), 1);
 
         year[0].distance.push({
           name: r.name,
@@ -90,7 +98,7 @@ function formatData(result)
         year[0].elevation.sort((a,b) => a.value > b.value ? -1 : b.value > a.value ? 1 : 0);
         year[0].rides.sort((a,b) => a.value > b.value ? -1 : b.value > a.value ? 1 : 0);
 
-        formatted.push(year[0]);
+        formatted.leaderboard.push(year[0]);
       } else {
         const f = {
           year: d.year,
@@ -120,12 +128,12 @@ function formatData(result)
           value: d.rides
         });
 
-        formatted.push(f);
+        formatted.leaderboard.push(f);
       }
     });
   });
 
-  formatted.sort((a,b) => a.year > b.year ? -1 : b.year > a.year ? 1 : 0);
+  formatted.leaderboard.sort((a,b) => a.year > b.year ? -1 : b.year > a.year ? 1 : 0);
 
   return formatted;
 }
