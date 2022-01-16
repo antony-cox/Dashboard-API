@@ -34,7 +34,7 @@ exports.addRaw = (w) => {
   return workoutRaw.save();
 }
 
-exports.get = (category, name) => {
+exports.get = (category, name, tssLow, tssHigh) => {
   let query = {};
 
   if (category != null && category != '')
@@ -46,6 +46,8 @@ exports.get = (category, name) => {
   {
     query.name = new RegExp(name, 'i');
   }
+
+  query.tss = { $gte: tssLow, $lt: tssHigh };
 
   return formatSelect(Workout.find(query));
 }

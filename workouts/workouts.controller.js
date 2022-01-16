@@ -8,11 +8,13 @@ exports.get = async (req, res, next) => {
   const limit = req.body.limit > 0 ? parseInt(req.body.limit) : 50;
   const category = req.body.category;
   const name = req.body.name;
+  const tssLow = req.body.tssLow;
+  const tssHigh = req.body.tssHigh;
   const skipIndex = (page - 1) * limit;
   let results;
 
   try {
-    results = await WorkoutModel.get(category, name)
+    results = await WorkoutModel.get(category, name, tssLow, tssHigh)
       .sort({name: 1})
       .limit(limit)
       .skip(skipIndex)
