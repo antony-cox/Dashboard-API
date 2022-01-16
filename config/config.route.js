@@ -15,10 +15,6 @@ router.post('/add', function(req, res, next) {
   }
 });
 
-router.get('/getLeaderboardDate', function(req, res, next) {
-  ConfigController.getLeaderboardDate(req, res, next);
-});
-
 module.exports = router;
 
 function hasPermission(user)

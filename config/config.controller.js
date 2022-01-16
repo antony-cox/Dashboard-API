@@ -48,13 +48,3 @@ exports.getLeaderboardConfig = () => {
         return lb;
     })
 }
-
-exports.getLeaderboardDate = (req, res, next) => {
-    ConfigModel.get()
-    .then((result) => {  
-        res.status(201).send(result.leaderboardRefreshed);
-    })
-    .catch((err) => {
-        next(err);
-    });
-}
