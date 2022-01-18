@@ -7,7 +7,7 @@ exports.authenticateToken = (req, res, next) => {
     jwt.verify(token, process.env.tokenKey, function(err, user) {
         if (err)
         {
-            res.sendStatus(403);
+            res.status(403).send(err);
         } else {
             req.user = user;
             next();

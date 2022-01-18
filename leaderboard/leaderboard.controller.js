@@ -10,20 +10,17 @@ exports.refresh = async (req, res, next) => {
   const data = await getData(false);
 
   LeaderboardModel.update(data)
-  .then((result) => {
+  .then((lb) => {
     ConfigModel.get()
     .then((result) => {  
         result.leaderboardRefreshed = new Date();
         ConfigModel.add(result);
+
+        res.status(201).send(formatData(lb, result.leaderboardRefreshed));
     })
     .catch((err) => {
-        next(err);
+      console.log(err);
     });
-
-    if(res != undefined)
-    {
-      res.status(201).send(formatData(result));
-    }
   })
   .catch((err) => {
     console.log(err);

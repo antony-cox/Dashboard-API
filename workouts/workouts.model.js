@@ -52,6 +52,24 @@ exports.get = (category, name, tssLow, tssHigh) => {
   return formatSelect(Workout.find(query));
 }
 
+exports.getCount = (category, name, tssLow, tssHigh) => {
+  let query = {};
+
+  if (category != null && category != '')
+  {
+    query.category = new RegExp('^' + category + '$', 'i');
+  }
+
+  if (name != null && name != '')
+  {
+    query.name = new RegExp(name, 'i');
+  }
+
+  query.tss = { $gte: tssLow, $lt: tssHigh };
+
+  return Workout.find(query).countDocuments();
+}
+
 exports.getRaw = (name) => {
   let query = {};
 

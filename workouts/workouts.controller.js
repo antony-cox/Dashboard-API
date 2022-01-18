@@ -4,23 +4,25 @@ const puppeteer = require('puppeteer');
 const { filter } = require('compression');
 
 exports.get = async (req, res, next) => {
-  const page = req.body.page > 0 ? parseInt(req.body.page) : 1;
+  const page = req.body.page != null ? parseInt(req.body.page) : 0;
   const limit = req.body.limit > 0 ? parseInt(req.body.limit) : 50;
   const category = req.body.category;
   const name = req.body.name;
   const tssLow = req.body.tssLow;
   const tssHigh = req.body.tssHigh;
-  const skipIndex = (page - 1) * limit;
-  let results;
+  const skipIndex = page * limit;
 
   try {
-    results = await WorkoutModel.get(category, name, tssLow, tssHigh)
+    const count = await WorkoutModel.getCount(category, name, tssLow, tssHigh);
+    const results = await WorkoutModel.get(category, name, tssLow, tssHigh)
       .sort({name: 1})
       .limit(limit)
       .skip(skipIndex)
       .exec();
 
-      res.status(201).send(results);
+
+    const data = {count: count, workouts: results};
+    res.status(201).send(data);
   } catch(e) {
     console.log(e);
     res.status(500).json({ message: "Error Occured" });
