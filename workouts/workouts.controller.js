@@ -10,11 +10,13 @@ exports.get = async (req, res, next) => {
   const name = req.body.name;
   const tssLow = req.body.tssLow;
   const tssHigh = req.body.tssHigh;
+  const durationLow = req.body.durationLow * 60;
+  const durationHigh = req.body.durationHigh * 60;
   const skipIndex = page * limit;
 
   try {
-    const count = await WorkoutModel.getCount(category, name, tssLow, tssHigh);
-    const results = await WorkoutModel.get(category, name, tssLow, tssHigh)
+    const count = await WorkoutModel.getCount(category, name, tssLow, tssHigh, durationLow, durationHigh);
+    const results = await WorkoutModel.get(category, name, tssLow, tssHigh, durationLow, durationHigh)
       .sort({name: 1})
       .limit(limit)
       .skip(skipIndex)

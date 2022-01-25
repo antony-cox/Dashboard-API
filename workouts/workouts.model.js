@@ -34,7 +34,7 @@ exports.addRaw = (w) => {
   return workoutRaw.save();
 }
 
-exports.get = (category, name, tssLow, tssHigh) => {
+exports.get = (category, name, tssLow, tssHigh, durationLow, durationHigh) => {
   let query = {};
 
   if (category != null && category != '')
@@ -48,11 +48,12 @@ exports.get = (category, name, tssLow, tssHigh) => {
   }
 
   query.tss = { $gte: tssLow, $lt: tssHigh };
+  query.duration = { $gte: durationLow, $lt: durationHigh };
 
   return formatSelect(Workout.find(query));
 }
 
-exports.getCount = (category, name, tssLow, tssHigh) => {
+exports.getCount = (category, name, tssLow, tssHigh, durationLow, durationHigh) => {
   let query = {};
 
   if (category != null && category != '')
@@ -66,6 +67,7 @@ exports.getCount = (category, name, tssLow, tssHigh) => {
   }
 
   query.tss = { $gte: tssLow, $lt: tssHigh };
+  query.duration = { $gte: durationLow, $lt: durationHigh };
 
   return Workout.find(query).countDocuments();
 }
