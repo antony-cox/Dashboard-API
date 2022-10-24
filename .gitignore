@@ -44,4 +44,6 @@ Thumbs.db
 #secrets
 .env
 discord/config.json
+
+#media
 discord/allerlei/*

@@ -11,7 +11,7 @@ const commands = [];
 const commandFiles = fs.readdirSync(path.resolve('discord/commands')).filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-	if (file != 'ping.js' && file != 'restoreHistory.js')
+	if (file != 'ping.js')
 	{
 		const command = require(`./commands/${file}`);
 		commands.push(command.data.toJSON());

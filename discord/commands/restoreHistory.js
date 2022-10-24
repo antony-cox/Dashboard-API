@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('path');
 const { SlashCommandBuilder, bold, italic, quote, blockQuote } = require('@discordjs/builders');
+const VaultModel = require('../vault/vault.model');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -17,34 +18,51 @@ module.exports = {
 			chatHistory = chatHistory.concat(chatData.messages);
 		}
 
+		chatHistory = chatHistory.filter(c => c.photos != null || c.videos != null);
 		chatHistory.sort((a,b) => a.timestamp_ms - b.timestamp_ms);
 
-		let prevName = '';
-
-		for(let i = 0;i<200;i++)
+		for(let i = 0;i<chatHistory.length;i++)
 		{
 			const c = chatHistory[i];
-			let message = '';
-			let date = new Date(c.timestamp_ms);
-
 			if(c.sender_name === 'C\u00c3\u00a9dric Van Soom') c.sender_name = 'Cédric Van Soom';
-			if(c.content.indexOf('\u00c3\u00a9')) c.content = c.content.replace('\u00c3\u00a9', 'é');
-			
-			if(c.sender_name === prevName)
+
+			if(c.photos != null)
 			{
-				message = quote(c.content);
-			} else {
-				message = italic(bold(c.sender_name + ' (' + date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear() + ' at ' + date.getHours() + ':' + date.getMinutes() + '):'))
-				 			+ '\n' + quote(c.content);
+				for(let y = 0;y<c.photos.length;y++)
+				{
+					const p = c.photos[y];
+
+					let vault = {
+						id: c.timestamp_ms,
+						username: c.sender_name,
+						timestamp: c.timestamp_ms,
+						name: '',
+						url: 'assets/allerlei/photos/' + p.uri.split('/')[4],
+						channel: 'Messenger'
+					}
+
+					VaultModel.add(vault);
+				}
 			}
-			
-			await interaction.channel.send(message)
-				.then(message => console.log(message.content))
-				.catch(console.error);
 
-			prevName = c.sender_name;
+			if(c.videos != null)
+			{
+				for(let y = 0;y<c.videos.length;y++)
+				{
+					const v = c.videos[y];
+
+					let vault = {
+						id: c.timestamp_ms,
+						username: c.sender_name,
+						timestamp: c.timestamp_ms,
+						name: '',
+						url: 'assets/allerlei/videos/' + v.uri.split('/')[4],
+						channel: 'Messenger'
+					}
+
+					VaultModel.add(vault);
+				}
+			}
 		}
-
-		console.log(chatHistory[99]);
 	}
 };
