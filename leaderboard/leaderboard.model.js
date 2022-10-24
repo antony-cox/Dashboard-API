@@ -25,14 +25,17 @@ exports.update = async (data) => {
       let doc = await Leaderboard.findOne({id: d.id});
 
       d.data.forEach(dd => {
-        let year = doc.data.filter(f => f.year == dd.year);
-
-        if(year.length > 0)
+        if(dd.year != null && dd.year > 0 && dd.distance != null && dd.distance > 0)
         {
-          doc.data.splice(doc.data.indexOf(year[0]), 1);   
-        }
+          let year = doc.data.filter(f => f.year == dd.year);
 
-        doc.data.push(dd);  
+          if(year.length > 0)
+          {
+            doc.data.splice(doc.data.indexOf(year[0]), 1);   
+          }
+
+          doc.data.push(dd);  
+          }
       });
 
       doc.save();

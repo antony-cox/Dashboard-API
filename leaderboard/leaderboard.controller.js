@@ -55,8 +55,7 @@ exports.get = (req, res, next) => {
     });
 }
 
-function formatData(result, refreshDate)
-{
+function formatData (result, refreshDate) {
   let formatted = {
     refreshDate: refreshDate,
     leaderboard: []
@@ -174,7 +173,8 @@ async function getData(getAll)
 
     try
     {
-      await page.click('#athlete-profile > div.row.no-margins > div.spans5.offset1.sidebar > div.section.comparison.borderless > div.running.hidden > table > thead > tr > th:nth-child(1) > ul > li:nth-child(1) > button');
+      await page.click('#athlete-profile > div.row.no-margins > div.spans5.offset1.sidebar > div.section.comparison.borderless > div.hidden.sport-0.active-tab > table > thead > tr > th:nth-child(1) > ul > li:nth-child(2) > button');
+      await page.waitForTimeout(1000);
     } catch (err) {}
     
     if(getAll)
@@ -206,19 +206,20 @@ async function getAthleteData(page, config)
   let year = await getValue(page, config.selectors.year);
 
   let distance = await getValue(page, config.selectors.distance);
-  distance = distance.replace(" km", "").replace(",", "");
-
-  let time = await getValue(page, config.selectors.time);
-  time = time.replace('<abbr class="unit" title="hour">h</abbr>', '').replace('<abbr class="unit" title="minute">m</abbr>', '');
-  time = time.replace('<abbr class="unit" title="uur">u</abbr>', '').replace('<abbr class="unit" title="minuut">m</abbr>', '');
-  let timeSplit = time.split(" ");
-  if(timeSplit.length > 0)
-  {
-    time = Number(timeSplit[0]) * 60 + Number(timeSplit[1]);
-  } 
+  if(distance != null) distance = distance.replace(" km", "").replace(",", "");
   
+  let time = await getValue(page, config.selectors.time);
+  if(time != null) {
+    time = time.replace('h', '').replace('m', '');
+    let timeSplit = time.split(" ");
+    if(timeSplit.length > 0)
+    {
+      time = Number(timeSplit[0]) * 60 + Number(timeSplit[1]);
+    } 
+  }
+
   let elevation = await getValue(page, config.selectors.elevation);
-  elevation = elevation.replace(" m", "").replace(",", "");
+  if(elevation != null) elevation = elevation.replace(" m", "").replace(",", "");
 
   let rides = await getValue(page, config.selectors.rides);
 
