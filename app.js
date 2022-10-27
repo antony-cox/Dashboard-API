@@ -44,6 +44,10 @@ app.use('/weight', auth.authenticateToken, weightRouter);
 var workoutsRouter = require('./workouts/workouts.route');
 app.use('/workouts', auth.authenticateToken, workoutsRouter);
 
+//DISCORD
+var discordRouter = require('./discord/vault/vault.route');
+app.use('/discord', discordRouter);
+
 //INDEX ROUTE
 app.use('/', function(req, res, next) {
   res.send('homeDash API');
@@ -56,10 +60,10 @@ const refreshJob = schedule.scheduleJob({hour: 4, minute: 0}, () => {
 });
 
 //START SERVER HTTPS
-// const options = {
-//   key: fs.readFileSync("/etc/letsencrypt/live/tonny.icu/privkey.pem"),
-//   cert: fs.readFileSync("/etc/letsencrypt/live/tonny.icu/fullchain.pem")
-// };
+const options = {
+  key: fs.readFileSync("/etc/letsencrypt/live/tonny.icu/privkey.pem"),
+  cert: fs.readFileSync("/etc/letsencrypt/live/tonny.icu/fullchain.pem")
+};
 
-// https.createServer(options, app).listen(3001);
-app.listen(3000);
+https.createServer(options, app).listen(3001);
+// app.listen(3000);

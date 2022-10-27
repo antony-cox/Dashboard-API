@@ -17,3 +17,30 @@ exports.add = (vaultData) => {
     var vault = new Vault(vaultData);
     return vault.save();
 }
+
+exports.getCount = (channel) => {
+  let query = {};
+
+  if (channel != null && channel != '')
+  {
+    query.channel = new RegExp(channel, 'i');
+  }
+
+  return Vault.find(query).countDocuments();
+}
+
+exports.get = (channel) => {
+  let query = {};
+
+  if (channel != null && channel != '')
+  {
+    query.channel = new RegExp(channel, 'i');
+  }
+
+  return formatSelect(Vault.find(query));
+}
+
+function formatSelect(results)
+{
+  return results.select('-__v');
+}

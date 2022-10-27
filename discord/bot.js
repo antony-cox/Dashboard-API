@@ -38,8 +38,6 @@ client.once('ready', c => {
 
 //Listen to new messages on the server
 client.on("messageCreate", (message) => {
-	console.log(message);
-
 	if(message.attachments.size > 0)
 	{
 		for(let i = 0;i<message.attachments.size;i++)
